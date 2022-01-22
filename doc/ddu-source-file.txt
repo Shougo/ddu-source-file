@@ -20,10 +20,11 @@ This source collects files in the path.
 ==============================================================================
 INSTALL						*ddu-source-file-install*
 
-Please install both "ddu.vim" and "denops.vim".
+Please install both "ddu.vim" and "denops.vim" and "ddu-kind-file".
 
 https://github.com/Shougo/ddu.vim
 https://github.com/vim-denops/denops.vim
+https://github.com/Shougo/ddu-kind-file
 
 
 ==============================================================================
