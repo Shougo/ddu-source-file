@@ -4,18 +4,15 @@ File source for ddu.vim
 
 This source collects files in the path.
 
-
 ## Required
 
 ### denops.vim
 
 https://github.com/vim-denops/denops.vim
 
-
 ### ddu.vim
 
 https://github.com/Shougo/ddu.vim
-
 
 ## Configuration
 
