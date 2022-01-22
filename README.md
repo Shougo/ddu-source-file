@@ -27,5 +27,5 @@ call ddu#custom#patch_global('sourceParams', {
       \ })
 
 " Use file source.
-call ddu#start([{'name': 'file'}])
+call ddu#start({'sources': [{'name': 'file'}]})
 ```
