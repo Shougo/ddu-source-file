@@ -1,10 +1,11 @@
 import {
   BaseSource,
   Item,
-} from "https://deno.land/x/ddu_vim@v0.1.0/types.ts#^";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v0.1.0/deps.ts#^";
-import { join, resolve } from "https://deno.land/std@0.120.0/path/mod.ts";
+} from "https://deno.land/x/ddu_vim@v0.2.4/types.ts#^";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v0.2.4/deps.ts#^";
+import { join, resolve } from "https://deno.land/std@0.122.0/path/mod.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.1.0/file.ts#^";
+import { relative } from "https://deno.land/std@0.122.0/path/mod.ts#^";
 
 type Params = {
   path: string;
@@ -21,12 +22,17 @@ export class Source extends BaseSource<Params> {
       async start(controller) {
         const maxItems = 20000;
 
+        let dir = args.sourceParams.path;
+        if (dir == "") {
+          dir = await fn.getcwd(args.denops) as string;
+        }
+
         const tree = async (root: string) => {
           let items: Item<ActionData>[] = [];
           for await (const entry of Deno.readDir(root)) {
             const path = join(root, entry.name);
             items.push({
-              word: path,
+              word: relative(dir, path),
               action: {
                 path: path,
               },
@@ -43,11 +49,6 @@ export class Source extends BaseSource<Params> {
 
           return items;
         };
-
-        let dir = args.sourceParams.path;
-        if (dir == "") {
-          dir = await fn.getcwd(args.denops) as string;
-        }
 
         controller.enqueue(
           await tree(resolve(dir, dir)),
