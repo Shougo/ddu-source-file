@@ -1,8 +1,8 @@
 import {
   BaseSource,
   Item,
-} from "https://deno.land/x/ddu_vim@v0.2.4/types.ts#^";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v0.2.4/deps.ts#^";
+} from "https://deno.land/x/ddu_vim@v0.3.0/types.ts#^";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v0.3.0/deps.ts#^";
 import { join, resolve } from "https://deno.land/std@0.122.0/path/mod.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.1.0/file.ts#^";
 import { relative } from "https://deno.land/std@0.122.0/path/mod.ts#^";
@@ -32,7 +32,7 @@ export class Source extends BaseSource<Params> {
           for await (const entry of Deno.readDir(root)) {
             const path = join(root, entry.name);
             items.push({
-              word: relative(dir, path),
+              word: relative(dir, path) + (entry.isDirectory ? "/" : ""),
               action: {
                 path: path,
               },
