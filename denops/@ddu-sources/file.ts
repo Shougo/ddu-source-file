@@ -29,22 +29,26 @@ export class Source extends BaseSource<Params> {
 
         const tree = async (root: string) => {
           let items: Item<ActionData>[] = [];
-          for await (const entry of Deno.readDir(root)) {
-            const path = join(root, entry.name);
-            items.push({
-              word: relative(dir, path) + (entry.isDirectory ? "/" : ""),
-              action: {
-                path: path,
-              },
-            });
+          try {
+            for await (const entry of Deno.readDir(root)) {
+              const path = join(root, entry.name);
+              items.push({
+                word: relative(dir, path) + (entry.isDirectory ? "/" : ""),
+                action: {
+                  path: path,
+                },
+              });
 
-            if (items.length > maxItems) {
-              // Update items
-              controller.enqueue(items);
+              if (items.length > maxItems) {
+                // Update items
+                controller.enqueue(items);
 
-              // Clear
-              items = [];
+                // Clear
+                items = [];
+              }
             }
+          } catch (e: unknown) {
+            console.error(e);
           }
 
           return items;
