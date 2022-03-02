@@ -30,24 +30,17 @@ https://github.com/Shougo/ddu-kind-file
 ==============================================================================
 EXAMPLES					*ddu-source-file-examples*
 >
-	" Change source options.
+	" Change base path.
 	call ddu#custom#patch_global('sourceParams', {
 	      \ 'file': {'path': expand("~")},
 	      \ })
 
-	" Use file source.
+	" Use source.
 	call ddu#start({'sources': [{'name': 'file'}]})
 <
 
 ==============================================================================
 PARAMS						*ddu-source-file-params*
-
-				    		*ddu-source-file-param-path*
-path		(string)
-		Base path of files.  If it is empty, |getcwd()| is used
-		instead.
-
-		Default: ""
 
 
 ==============================================================================

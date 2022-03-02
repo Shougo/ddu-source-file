@@ -21,11 +21,11 @@ https://github.com/Shougo/ddu-kind-file
 ## Configuration
 
 ```vim
-" Change source options.
-call ddu#custom#patch_global('sourceParams', {
+" Change base path.
+call ddu#custom#patch_global('sourceOptions', {
       \ 'file': {'path': expand("~")},
       \ })
 
-" Use file source.
+" Use source.
 call ddu#start({'sources': [{'name': 'file'}]})
 ```

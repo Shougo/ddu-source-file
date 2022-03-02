@@ -1,28 +1,27 @@
 import {
   BaseSource,
   Item,
-} from "https://deno.land/x/ddu_vim@v0.12.2/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v0.12.2/deps.ts";
-import { join, resolve } from "https://deno.land/std@0.125.0/path/mod.ts";
+  SourceOptions,
+} from "https://deno.land/x/ddu_vim@v1.2.0/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v1.2.0/deps.ts";
+import { join, resolve } from "https://deno.land/std@0.127.0/path/mod.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.2.0/file.ts";
-import { relative } from "https://deno.land/std@0.125.0/path/mod.ts";
+import { relative } from "https://deno.land/std@0.127.0/path/mod.ts";
 
-type Params = {
-  path: string;
-};
+type Params = Record<never, never>;
 
 export class Source extends BaseSource<Params> {
   kind = "file";
 
   gather(args: {
     denops: Denops;
-    sourceParams: Params;
+    sourceOptions: SourceOptions;
   }): ReadableStream<Item<ActionData>[]> {
     return new ReadableStream({
       async start(controller) {
         const maxItems = 20000;
 
-        let dir = args.sourceParams.path;
+        let dir = args.sourceOptions.path;
         if (dir == "") {
           dir = await fn.getcwd(args.denops) as string;
         }
@@ -64,8 +63,6 @@ export class Source extends BaseSource<Params> {
   }
 
   params(): Params {
-    return {
-      path: "",
-    };
+    return {};
   }
 }
