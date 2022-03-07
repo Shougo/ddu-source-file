@@ -4,9 +4,9 @@ import {
   SourceOptions,
 } from "https://deno.land/x/ddu_vim@v1.2.0/types.ts";
 import { Denops, fn } from "https://deno.land/x/ddu_vim@v1.2.0/deps.ts";
-import { join, resolve } from "https://deno.land/std@0.127.0/path/mod.ts";
-import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.2.0/file.ts";
-import { relative } from "https://deno.land/std@0.127.0/path/mod.ts";
+import { join, resolve } from "https://deno.land/std@0.128.0/path/mod.ts";
+import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.0/file.ts";
+import { relative } from "https://deno.land/std@0.128.0/path/mod.ts";
 
 type Params = Record<never, never>;
 
@@ -35,6 +35,7 @@ export class Source extends BaseSource<Params> {
                 word: relative(dir, path) + (entry.isDirectory ? "/" : ""),
                 action: {
                   path: path,
+                  isDirectory: entry.isDirectory,
                 },
               });
 
