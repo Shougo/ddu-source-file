@@ -8,7 +8,9 @@ import { join, resolve } from "https://deno.land/std@0.128.0/path/mod.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.0/file.ts";
 import { relative } from "https://deno.land/std@0.128.0/path/mod.ts";
 
-type Params = Record<never, never>;
+type Params = {
+  "new": boolean;
+};
 
 export class Source extends BaseSource<Params> {
   kind = "file";
@@ -16,6 +18,8 @@ export class Source extends BaseSource<Params> {
   gather(args: {
     denops: Denops;
     sourceOptions: SourceOptions;
+    sourceParams: Params;
+    input: string;
   }): ReadableStream<Item<ActionData>[]> {
     return new ReadableStream({
       async start(controller) {
@@ -54,9 +58,23 @@ export class Source extends BaseSource<Params> {
           return items;
         };
 
-        controller.enqueue(
-          await tree(resolve(dir, dir)),
-        );
+        if (args.sourceParams.new) {
+          if (args.input != "") {
+            controller.enqueue(
+              [{
+                word: args.input,
+                display: `[new] ${args.input}`,
+                action: {
+                  path: join(dir, args.input),
+                },
+              }],
+            );
+          }
+        } else {
+          controller.enqueue(
+            await tree(resolve(dir, dir)),
+          );
+        }
 
         controller.close();
       },
@@ -64,6 +82,8 @@ export class Source extends BaseSource<Params> {
   }
 
   params(): Params {
-    return {};
+    return {
+      "new": false,
+    };
   }
 }
