@@ -2,11 +2,11 @@ import {
   BaseSource,
   Item,
   SourceOptions,
-} from "https://deno.land/x/ddu_vim@v1.2.0/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v1.2.0/deps.ts";
-import { join, resolve } from "https://deno.land/std@0.128.0/path/mod.ts";
+} from "https://deno.land/x/ddu_vim@v1.8.5/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v1.8.5/deps.ts";
+import { join, resolve } from "https://deno.land/std@0.144.0/path/mod.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.0/file.ts";
-import { relative } from "https://deno.land/std@0.128.0/path/mod.ts";
+import { relative } from "https://deno.land/std@0.144.0/path/mod.ts";
 
 type Params = {
   "new": boolean;
@@ -14,6 +14,7 @@ type Params = {
 
 export class Source extends BaseSource<Params> {
   kind = "file";
+  prevMtime = -1;
 
   gather(args: {
     denops: Denops;
@@ -77,8 +78,28 @@ export class Source extends BaseSource<Params> {
         }
 
         controller.close();
+
+        const stat = await Deno.stat(dir);
+        this.prevMtime = stat.mtime;
       },
     });
+  }
+
+  async checkUpdated(args: {
+    denops: Denops;
+    sourceOptions: SourceOptions;
+  }): Promise<boolean> {
+    let dir = args.sourceOptions.path;
+    if (dir == "") {
+      dir = await fn.getcwd(args.denops) as string;
+    }
+
+    if (!(await exists(dir))) {
+      return -1;
+    }
+
+    const stat = await Deno.stat(dir);
+    return stat.mtime > this.prevMtime;
   }
 
   params(): Params {
@@ -87,3 +108,17 @@ export class Source extends BaseSource<Params> {
     };
   }
 }
+
+const exists = async (path: string) => {
+  // Note: Deno.stat() may be failed
+  try {
+    const stat = await Deno.stat(path);
+    if (stat.isDirectory || stat.isFile || stat.isSymlink) {
+      return true;
+    }
+  } catch (_: unknown) {
+    // Ignore stat exception
+  }
+
+  return false;
+};
