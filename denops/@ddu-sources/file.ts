@@ -99,7 +99,10 @@ export class Source extends BaseSource<Params> {
     }
 
     const stat = await Deno.stat(dir);
-    return stat.mtime > this.prevMtime;
+    const check = stat.mtime > this.prevMtime;
+    this.prevMtime = stat.mtime;
+
+    return check;
   }
 
   params(): Params {
