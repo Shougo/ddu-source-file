@@ -2,11 +2,11 @@ import {
   BaseSource,
   Item,
   SourceOptions,
-} from "https://deno.land/x/ddu_vim@v1.8.5/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v1.8.5/deps.ts";
-import { join, resolve } from "https://deno.land/std@0.144.0/path/mod.ts";
+} from "https://deno.land/x/ddu_vim@v1.8.6/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v1.8.6/deps.ts";
+import { join, resolve } from "https://deno.land/std@0.147.0/path/mod.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.0/file.ts";
-import { relative } from "https://deno.land/std@0.144.0/path/mod.ts";
+import { relative } from "https://deno.land/std@0.147.0/path/mod.ts";
 
 type Params = {
   "new": boolean;
@@ -36,11 +36,16 @@ export class Source extends BaseSource<Params> {
           try {
             for await (const entry of Deno.readDir(root)) {
               const path = join(root, entry.name);
+              const stat = await Deno.stat(path);
               items.push({
                 word: relative(dir, path) + (entry.isDirectory ? "/" : ""),
                 action: {
                   path: path,
                   isDirectory: entry.isDirectory,
+                },
+                status: {
+                  size: stat.size,
+                  time: stat.mtime,
                 },
               });
 
