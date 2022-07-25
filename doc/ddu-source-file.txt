@@ -32,7 +32,7 @@ https://github.com/Shougo/ddu-kind-file
 EXAMPLES					*ddu-source-file-examples*
 >
 	" Change base path.
-	call ddu#custom#patch_global('sourceParams', {
+	call ddu#custom#patch_global('sourceOptions', {
 	      \ 'file': {'path': expand("~")},
 	      \ })
 
