@@ -45,7 +45,7 @@ export class Source extends BaseSource<Params> {
                 },
                 status: {
                   size: stat.size,
-                  time: stat.mtime ? stat.mtime.getTime() : undefined,
+                  time: stat.mtime?.getTime(),
                 },
               });
 
