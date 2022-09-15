@@ -2,11 +2,11 @@ import {
   BaseSource,
   Item,
   SourceOptions,
-} from "https://deno.land/x/ddu_vim@v1.8.6/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v1.8.6/deps.ts";
-import { join, resolve } from "https://deno.land/std@0.147.0/path/mod.ts";
-import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.0/file.ts";
-import { relative } from "https://deno.land/std@0.147.0/path/mod.ts";
+} from "https://deno.land/x/ddu_vim@v2.5.2/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.5.2/deps.ts";
+import { join, resolve } from "https://deno.land/std@0.155.0/path/mod.ts";
+import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.1/file.ts";
+import { relative } from "https://deno.land/std@0.155.0/path/mod.ts";
 
 type Params = {
   "new": boolean;
@@ -14,7 +14,6 @@ type Params = {
 
 export class Source extends BaseSource<Params> {
   kind = "file";
-  prevMtime = -1;
 
   gather(args: {
     denops: Denops;
@@ -22,6 +21,8 @@ export class Source extends BaseSource<Params> {
     sourceParams: Params;
     input: string;
   }): ReadableStream<Item<ActionData>[]> {
+    this.prevMtime = new Date();
+
     return new ReadableStream({
       async start(controller) {
         const maxItems = 20000;
@@ -42,6 +43,7 @@ export class Source extends BaseSource<Params> {
                 action: {
                   path: path,
                   isDirectory: entry.isDirectory,
+                  isLink: entry.isSymlink,
                 },
                 status: {
                   size: stat.size,
@@ -83,9 +85,6 @@ export class Source extends BaseSource<Params> {
         }
 
         controller.close();
-
-        const stat = await Deno.stat(dir);
-        this.prevMtime = stat.mtime;
       },
     });
   }
@@ -100,10 +99,13 @@ export class Source extends BaseSource<Params> {
     }
 
     if (!(await exists(dir))) {
-      return -1;
+      return false;
     }
 
     const stat = await Deno.stat(dir);
+    if (!stat.mtime) {
+      return false;
+    }
     const check = stat.mtime > this.prevMtime;
     this.prevMtime = stat.mtime;
 
