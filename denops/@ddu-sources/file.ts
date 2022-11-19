@@ -4,9 +4,9 @@ import {
   SourceOptions,
 } from "https://deno.land/x/ddu_vim@v.1.13.0/types.ts";
 import { Denops, fn } from "https://deno.land/x/ddu_vim@v.1.13.0/deps.ts";
-import { join, resolve } from "https://deno.land/std@0.161.0/path/mod.ts";
+import { join, resolve } from "https://deno.land/std@0.165.0/path/mod.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.1/file.ts";
-import { relative } from "https://deno.land/std@0.161.0/path/mod.ts";
+import { relative } from "https://deno.land/std@0.165.0/path/mod.ts";
 
 type Params = {
   "new": boolean;
@@ -39,17 +39,17 @@ export class Source extends BaseSource<Params> {
               const path = join(root, entry.name);
               const stat = await Deno.stat(path);
               items.push({
-                word: relative(dir, path) + (entry.isDirectory ? "/" : ""),
+                word: relative(dir, path) + (stat.isDirectory ? "/" : ""),
                 action: {
                   path: path,
-                  isDirectory: entry.isDirectory,
-                  isLink: entry.isSymlink,
+                  isDirectory: stat.isDirectory,
+                  isLink: stat.isSymlink,
                 },
                 status: {
                   size: stat.size,
                   time: stat.mtime?.getTime(),
                 },
-                isTree: entry.isDirectory,
+                isTree: stat.isDirectory,
                 treePath: path,
               });
 

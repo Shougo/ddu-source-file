@@ -31,13 +31,12 @@ https://github.com/Shougo/ddu-kind-file
 ==============================================================================
 EXAMPLES					*ddu-source-file-examples*
 >
+	call ddu#start(#{ sources: [#{ name: 'file' }] })
+	
 	" Change base path.
-	call ddu#custom#patch_global('sourceOptions', {
-	      \ 'file': {'path': expand("~")},
+	call ddu#custom#patch_global('sourceOptions', #{
+	      \   file: #{ path: expand("~") },
 	      \ })
-
-	" Use source.
-	call ddu#start({'sources': [{'name': 'file'}]})
 <
 
 ==============================================================================
