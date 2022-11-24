@@ -2,8 +2,8 @@ import {
   BaseSource,
   Item,
   SourceOptions,
-} from "https://deno.land/x/ddu_vim@v.1.13.0/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v.1.13.0/deps.ts";
+} from "https://deno.land/x/ddu_vim@v2.0.0/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.0.0/deps.ts";
 import { join, resolve } from "https://deno.land/std@0.165.0/path/mod.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.1/file.ts";
 import { relative } from "https://deno.land/std@0.165.0/path/mod.ts";
@@ -13,9 +13,9 @@ type Params = {
 };
 
 export class Source extends BaseSource<Params> {
-  kind = "file";
+  override kind = "file";
 
-  gather(args: {
+  override gather(args: {
     denops: Denops;
     sourceOptions: SourceOptions;
     sourceParams: Params;
@@ -91,7 +91,7 @@ export class Source extends BaseSource<Params> {
     });
   }
 
-  async checkUpdated(args: {
+  override async checkUpdated(args: {
     denops: Denops;
     sourceOptions: SourceOptions;
   }): Promise<boolean> {
@@ -114,7 +114,7 @@ export class Source extends BaseSource<Params> {
     return check;
   }
 
-  params(): Params {
+  override params(): Params {
     return {
       "new": false,
     };
