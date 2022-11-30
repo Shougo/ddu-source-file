@@ -4,9 +4,9 @@ import {
   SourceOptions,
 } from "https://deno.land/x/ddu_vim@v2.0.0/types.ts";
 import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.0.0/deps.ts";
-import { join, resolve } from "https://deno.land/std@0.165.0/path/mod.ts";
-import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.1/file.ts";
-import { relative } from "https://deno.land/std@0.165.0/path/mod.ts";
+import { join, resolve } from "https://deno.land/std@0.166.0/path/mod.ts";
+import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.2/file.ts";
+import { relative } from "https://deno.land/std@0.166.0/path/mod.ts";
 
 type Params = {
   "new": boolean;
