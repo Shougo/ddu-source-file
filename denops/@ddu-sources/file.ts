@@ -37,7 +37,14 @@ export class Source extends BaseSource<Params> {
           try {
             for await (const entry of Deno.readDir(root)) {
               const path = join(root, entry.name);
-              const stat = await Deno.stat(path);
+              const stat = await (async () => {
+                let ret = await Deno.lstat(path);
+                if (ret.isSymlink) {
+                  ret = await Deno.stat(path);
+                  ret.isSymlink = true;
+                }
+                return ret;
+              })();
               items.push({
                 word: relative(dir, path) + (stat.isDirectory ? "/" : ""),
                 action: {
