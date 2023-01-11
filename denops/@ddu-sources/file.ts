@@ -2,11 +2,11 @@ import {
   BaseSource,
   Item,
   SourceOptions,
-} from "https://deno.land/x/ddu_vim@v2.0.0/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.0.0/deps.ts";
-import { join, resolve } from "https://deno.land/std@0.166.0/path/mod.ts";
+} from "https://deno.land/x/ddu_vim@v2.2.0/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.2.0/deps.ts";
+import { join, resolve } from "https://deno.land/std@0.171.0/path/mod.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.2/file.ts";
-import { relative } from "https://deno.land/std@0.166.0/path/mod.ts";
+import { relative } from "https://deno.land/std@0.171.0/path/mod.ts";
 
 type Params = {
   "new": boolean;
@@ -37,6 +37,7 @@ export class Source extends BaseSource<Params> {
           try {
             for await (const entry of Deno.readDir(root)) {
               const path = join(root, entry.name);
+
               const stat = await (async () => {
                 let ret = await Deno.lstat(path);
                 if (ret.isSymlink) {
@@ -45,6 +46,7 @@ export class Source extends BaseSource<Params> {
                 }
                 return ret;
               })();
+
               items.push({
                 word: relative(dir, path) + (stat.isDirectory ? "/" : ""),
                 action: {
@@ -107,7 +109,7 @@ export class Source extends BaseSource<Params> {
       dir = await fn.getcwd(args.denops) as string;
     }
 
-    if (!(await exists(dir))) {
+    if (!await exists(dir)) {
       return false;
     }
 
