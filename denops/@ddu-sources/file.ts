@@ -41,8 +41,12 @@ export class Source extends BaseSource<Params> {
               const stat = await (async () => {
                 let ret = await Deno.lstat(path);
                 if (ret.isSymlink) {
-                  ret = await Deno.stat(path);
-                  ret.isSymlink = true;
+                  try {
+                    ret = await Deno.stat(path);
+                    ret.isSymlink = true;
+                  } catch (_: unknown) {
+                    // Ignore stat exception
+                  }
                 }
                 return ret;
               })();
