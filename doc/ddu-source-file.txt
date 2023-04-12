@@ -58,7 +58,7 @@ A: You can use |ddu-source-file-param-new|.
 Note: It use "ddu-commands.vim".
 https://github.com/Shougo/ddu-commands.vim
 >
-	Ddu -volatile file file -source-param-new
+	Ddu file file -source-param-new -source-option-volatile
 <
 
 ==============================================================================

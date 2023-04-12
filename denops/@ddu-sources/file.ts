@@ -2,11 +2,11 @@ import {
   BaseSource,
   Item,
   SourceOptions,
-} from "https://deno.land/x/ddu_vim@v2.2.0/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.2.0/deps.ts";
-import { join, resolve } from "https://deno.land/std@0.171.0/path/mod.ts";
+} from "https://deno.land/x/ddu_vim@v2.7.1/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.7.1/deps.ts";
+import { join, resolve } from "https://deno.land/std@0.183.0/path/mod.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.2/file.ts";
-import { relative } from "https://deno.land/std@0.171.0/path/mod.ts";
+import { relative } from "https://deno.land/std@0.183.0/path/mod.ts";
 
 type Params = {
   "new": boolean;
@@ -27,10 +27,9 @@ export class Source extends BaseSource<Params> {
       async start(controller) {
         const maxItems = 20000;
 
-        let dir = args.sourceOptions.path;
-        if (dir == "") {
-          dir = await fn.getcwd(args.denops) as string;
-        }
+        const dir = args.sourceOptions.path != ""
+          ? args.sourceOptions.path
+          : await fn.getcwd(args.denops) as string;
 
         const tree = async (root: string) => {
           let items: Item<ActionData>[] = [];
