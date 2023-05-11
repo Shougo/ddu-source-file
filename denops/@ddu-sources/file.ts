@@ -2,11 +2,14 @@ import {
   BaseSource,
   Item,
   SourceOptions,
-} from "https://deno.land/x/ddu_vim@v2.7.1/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.7.1/deps.ts";
-import { join, resolve } from "https://deno.land/std@0.183.0/path/mod.ts";
-import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.2/file.ts";
-import { relative } from "https://deno.land/std@0.183.0/path/mod.ts";
+} from "https://deno.land/x/ddu_vim@v2.8.4/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.8.4/deps.ts";
+import { join } from "https://deno.land/std@0.186.0/path/mod.ts";
+import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.4.0/file.ts";
+import {
+  isAbsolute,
+  relative,
+} from "https://deno.land/std@0.186.0/path/mod.ts";
 
 type Params = {
   "new": boolean;
@@ -27,7 +30,7 @@ export class Source extends BaseSource<Params> {
       async start(controller) {
         const maxItems = 20000;
 
-        const dir = args.sourceOptions.path != ""
+        const basePath = args.sourceOptions.path != ""
           ? args.sourceOptions.path
           : await fn.getcwd(args.denops) as string;
 
@@ -50,10 +53,14 @@ export class Source extends BaseSource<Params> {
                 return ret;
               })();
 
+              const word =
+                (isAbsolute(args.input) ? path : relative(basePath, path)) +
+                (stat.isDirectory ? "/" : "");
+
               items.push({
-                word: relative(dir, path) + (stat.isDirectory ? "/" : ""),
+                word,
                 action: {
-                  path: path,
+                  path,
                   isDirectory: stat.isDirectory,
                   isLink: stat.isSymlink,
                 },
@@ -87,15 +94,22 @@ export class Source extends BaseSource<Params> {
                 word: args.input,
                 display: `[new] ${args.input}`,
                 action: {
-                  path: join(dir, args.input),
+                  path: join(basePath, args.input),
                 },
               }],
             );
           }
         } else {
-          controller.enqueue(
-            await tree(resolve(dir, dir)),
-          );
+          const slashPos = args.input.lastIndexOf("/");
+          const rootPath = isAbsolute(args.input)
+            ? args.input.slice(0, slashPos)
+            : slashPos >= 0
+            ? join(basePath, args.input.slice(0, slashPos))
+            : basePath;
+
+          if (await isDirectory(rootPath)) {
+            controller.enqueue(await tree(rootPath));
+          }
         }
 
         controller.close();
@@ -112,7 +126,7 @@ export class Source extends BaseSource<Params> {
       dir = await fn.getcwd(args.denops) as string;
     }
 
-    if (!await exists(dir)) {
+    if (!await isDirectory(dir)) {
       return false;
     }
 
@@ -133,15 +147,14 @@ export class Source extends BaseSource<Params> {
   }
 }
 
-const exists = async (path: string) => {
+const isDirectory = async (path: string) => {
   // Note: Deno.stat() may be failed
   try {
-    const stat = await Deno.stat(path);
-    if (stat.isDirectory || stat.isFile || stat.isSymlink) {
+    if ((await Deno.stat(path)).isDirectory) {
       return true;
     }
-  } catch (_: unknown) {
-    // Ignore stat exception
+  } catch (_e: unknown) {
+    // Ignore
   }
 
   return false;
