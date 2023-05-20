@@ -4,12 +4,12 @@ import {
   SourceOptions,
 } from "https://deno.land/x/ddu_vim@v2.8.4/types.ts";
 import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.8.4/deps.ts";
-import { join } from "https://deno.land/std@0.186.0/path/mod.ts";
+import { join } from "https://deno.land/std@0.188.0/path/mod.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.4.0/file.ts";
 import {
   isAbsolute,
   relative,
-} from "https://deno.land/std@0.186.0/path/mod.ts";
+} from "https://deno.land/std@0.188.0/path/mod.ts";
 
 type Params = {
   "new": boolean;
