@@ -109,7 +109,7 @@ export class Source extends BaseSource<Params> {
 
           if (await isDirectory(rootPath)) {
             controller.enqueue(await tree(rootPath));
-          } else {
+          } else if (!await isDirectory(basePath)) {
             await args.denops.call(
               "ddu#util#print_error",
               `${rootPath} is not directory.`,
