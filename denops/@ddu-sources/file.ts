@@ -2,14 +2,19 @@ import {
   BaseSource,
   Item,
   SourceOptions,
-} from "https://deno.land/x/ddu_vim@v2.9.2/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.9.2/deps.ts";
-import { join } from "https://deno.land/std@0.190.0/path/mod.ts";
-import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.4.2/file.ts";
+  TreePath,
+} from "https://deno.land/x/ddu_vim@v3.2.0/types.ts";
+import {
+  Denops,
+  fn,
+  pathsep,
+} from "https://deno.land/x/ddu_vim@v3.2.0/deps.ts";
+import { join } from "https://deno.land/std@0.192.0/path/mod.ts";
+import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.5.0/file.ts";
 import {
   isAbsolute,
   relative,
-} from "https://deno.land/std@0.190.0/path/mod.ts";
+} from "https://deno.land/std@0.192.0/path/mod.ts";
 
 type Params = {
   "new": boolean;
@@ -30,8 +35,8 @@ export class Source extends BaseSource<Params> {
       async start(controller) {
         const maxItems = 20000;
 
-        const basePath = args.sourceOptions.path != ""
-          ? args.sourceOptions.path
+        const basePath = args.sourceOptions.path.length != 0
+          ? treePath2Filename(args.sourceOptions.path)
           : await fn.getcwd(args.denops) as string;
 
         const tree = async (root: string) => {
@@ -126,7 +131,7 @@ export class Source extends BaseSource<Params> {
     denops: Denops;
     sourceOptions: SourceOptions;
   }): Promise<boolean> {
-    let dir = args.sourceOptions.path;
+    let dir = treePath2Filename(args.sourceOptions.path);
     if (dir == "") {
       dir = await fn.getcwd(args.denops) as string;
     }
@@ -151,6 +156,10 @@ export class Source extends BaseSource<Params> {
     };
   }
 }
+
+const treePath2Filename = (treePath: TreePath) => {
+  return typeof treePath === "string" ? treePath : treePath.join(pathsep);
+};
 
 const isDirectory = async (path: string) => {
   // Note: Deno.stat() may be failed
