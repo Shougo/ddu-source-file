@@ -2,13 +2,9 @@ import {
   BaseSource,
   Item,
   SourceOptions,
-  TreePath,
-} from "https://deno.land/x/ddu_vim@v3.2.0/types.ts";
-import {
-  Denops,
-  fn,
-  pathsep,
-} from "https://deno.land/x/ddu_vim@v3.2.0/deps.ts";
+} from "https://deno.land/x/ddu_vim@v3.2.1/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v3.2.1/deps.ts";
+import { treePath2Filename } from "https://deno.land/x/ddu_vim@v3.2.1/utils.ts";
 import { join } from "https://deno.land/std@0.192.0/path/mod.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.5.0/file.ts";
 import {
@@ -156,10 +152,6 @@ export class Source extends BaseSource<Params> {
     };
   }
 }
-
-const treePath2Filename = (treePath: TreePath) => {
-  return typeof treePath === "string" ? treePath : treePath.join(pathsep);
-};
 
 const isDirectory = async (path: string) => {
   // Note: Deno.stat() may be failed
