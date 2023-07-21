@@ -2,15 +2,15 @@ import {
   BaseSource,
   Item,
   SourceOptions,
-} from "https://deno.land/x/ddu_vim@v3.2.1/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v3.2.1/deps.ts";
-import { treePath2Filename } from "https://deno.land/x/ddu_vim@v3.2.1/utils.ts";
-import { join } from "https://deno.land/std@0.192.0/path/mod.ts";
-import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.5.0/file.ts";
+} from "https://deno.land/x/ddu_vim@v3.4.3/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v3.4.3/deps.ts";
+import { treePath2Filename } from "https://deno.land/x/ddu_vim@v3.4.3/utils.ts";
+import { join } from "https://deno.land/std@0.195.0/path/mod.ts";
+import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.5.3/file.ts";
 import {
   isAbsolute,
   relative,
-} from "https://deno.land/std@0.192.0/path/mod.ts";
+} from "https://deno.land/std@0.195.0/path/mod.ts";
 
 type Params = {
   "new": boolean;
@@ -41,18 +41,10 @@ export class Source extends BaseSource<Params> {
             for await (const entry of Deno.readDir(root)) {
               const path = join(root, entry.name);
 
-              const stat = await (async () => {
-                let ret = await Deno.lstat(path);
-                if (ret.isSymlink) {
-                  try {
-                    ret = await Deno.stat(path);
-                    ret.isSymlink = true;
-                  } catch (_: unknown) {
-                    // Ignore stat exception
-                  }
-                }
-                return ret;
-              })();
+              const stat = await safeStat(path);
+              if (!stat) {
+                continue;
+              }
 
               const word =
                 (isAbsolute(args.input) ? path : relative(basePath, path)) +
@@ -108,13 +100,35 @@ export class Source extends BaseSource<Params> {
             ? join(basePath, args.input.slice(0, slashPos))
             : basePath;
 
-          if (await isDirectory(rootPath)) {
+          const stat = await safeStat(basePath);
+          if (stat?.isDirectory) {
             controller.enqueue(await tree(rootPath));
-          } else if (!await isDirectory(basePath)) {
-            await args.denops.call(
-              "ddu#util#print_error",
-              `${rootPath} is not directory.`,
-            );
+          } else {
+            // Check the file exists.
+            const stat = await safeStat(basePath);
+            if (stat) {
+              controller.enqueue(
+                [{
+                  word: basePath,
+                  action: {
+                    path: basePath,
+                    isDirectory: stat.isDirectory,
+                    isLink: stat.isSymlink,
+                  },
+                  status: {
+                    size: stat.size,
+                    time: stat.mtime?.getTime(),
+                  },
+                  isTree: stat.isDirectory,
+                  treePath: basePath,
+                }],
+              );
+            } else {
+              await args.denops.call(
+                "ddu#util#print_error",
+                `${rootPath} is not found.`,
+              );
+            }
           }
         }
 
@@ -132,14 +146,11 @@ export class Source extends BaseSource<Params> {
       dir = await fn.getcwd(args.denops) as string;
     }
 
-    if (!await isDirectory(dir)) {
+    const stat = await safeStat(dir);
+    if (!stat || !stat.isDirectory || !stat.mtime) {
       return false;
     }
 
-    const stat = await Deno.stat(dir);
-    if (!stat.mtime) {
-      return false;
-    }
     const check = stat.mtime > this.prevMtime;
     this.prevMtime = stat.mtime;
 
@@ -153,15 +164,21 @@ export class Source extends BaseSource<Params> {
   }
 }
 
-const isDirectory = async (path: string) => {
-  // Note: Deno.stat() may be failed
+const safeStat = async (path: string): Promise<Deno.FileInfo | null> => {
+  // NOTE: Deno.stat() may be failed
   try {
-    if ((await Deno.stat(path)).isDirectory) {
-      return true;
+    let stat = await Deno.lstat(path);
+    if (stat.isSymlink) {
+      try {
+        stat = await Deno.stat(path);
+        stat.isSymlink = true;
+      } catch (_: unknown) {
+        // Ignore stat exception
+      }
     }
-  } catch (_e: unknown) {
-    // Ignore
+    return stat;
+  } catch (_: unknown) {
+    // Ignore stat exception
   }
-
-  return false;
+  return null;
 };
