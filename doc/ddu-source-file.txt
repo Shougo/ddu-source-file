@@ -3,7 +3,7 @@
 Author: Shougo <Shougo.Matsu at gmail.com>
 License: MIT license
 
-CONTENTS					*ddu-source-file-contents*
+CONTENTS                                            *ddu-source-file-contents*
 
 Introduction		|ddu-source-file-introduction|
 Install			|ddu-source-file-install|
@@ -13,13 +13,13 @@ FAQ			|ddu-source-file-faq|
 
 
 ==============================================================================
-INTRODUCTION					*ddu-source-file-introduction*
+INTRODUCTION                                    *ddu-source-file-introduction*
 
 This source collects files in the path.
 
 
 ==============================================================================
-INSTALL						*ddu-source-file-install*
+INSTALL                                              *ddu-source-file-install*
 
 Please install both "ddu.vim" and "denops.vim" and "ddu-kind-file".
 
@@ -29,7 +29,7 @@ https://github.com/Shougo/ddu-kind-file
 
 
 ==============================================================================
-EXAMPLES					*ddu-source-file-examples*
+EXAMPLES                                            *ddu-source-file-examples*
 >
 	call ddu#start(#{ sources: [#{ name: 'file' }] })
 	
@@ -40,9 +40,9 @@ EXAMPLES					*ddu-source-file-examples*
 <
 
 ==============================================================================
-PARAMS						*ddu-source-file-params*
+PARAMS                                                *ddu-source-file-params*
 
-						*ddu-source-file-param-new*
+                                                   *ddu-source-file-param-new*
 new		(boolean)
 		Create new file by user input.
 
