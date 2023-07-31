@@ -2,15 +2,15 @@ import {
   BaseSource,
   Item,
   SourceOptions,
-} from "https://deno.land/x/ddu_vim@v3.4.3/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v3.4.3/deps.ts";
-import { treePath2Filename } from "https://deno.land/x/ddu_vim@v3.4.3/utils.ts";
-import { join } from "https://deno.land/std@0.195.0/path/mod.ts";
+} from "https://deno.land/x/ddu_vim@v3.4.4/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v3.4.4/deps.ts";
+import { treePath2Filename } from "https://deno.land/x/ddu_vim@v3.4.4/utils.ts";
+import { join } from "https://deno.land/std@0.196.0/path/mod.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.5.3/file.ts";
 import {
   isAbsolute,
   relative,
-} from "https://deno.land/std@0.195.0/path/mod.ts";
+} from "https://deno.land/std@0.196.0/path/mod.ts";
 
 type Params = {
   "new": boolean;
@@ -36,6 +36,11 @@ export class Source extends BaseSource<Params> {
           : await fn.getcwd(args.denops) as string;
 
         const tree = async (root: string) => {
+          const stat = await safeStat(root);
+          if (!stat?.isDirectory) {
+            return [];
+          }
+
           let items: Item<ActionData>[] = [];
           try {
             for await (const entry of Deno.readDir(root)) {
