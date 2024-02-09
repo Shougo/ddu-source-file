@@ -2,15 +2,15 @@ import {
   BaseSource,
   Item,
   SourceOptions,
-} from "https://deno.land/x/ddu_vim@v3.4.4/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v3.4.4/deps.ts";
-import { treePath2Filename } from "https://deno.land/x/ddu_vim@v3.4.4/utils.ts";
-import { join } from "https://deno.land/std@0.196.0/path/mod.ts";
-import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.5.3/file.ts";
+} from "https://deno.land/x/ddu_vim@v3.10.2/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v3.10.2/deps.ts";
+import { treePath2Filename } from "https://deno.land/x/ddu_vim@v3.10.2/utils.ts";
+import { join } from "https://deno.land/std@0.215.0/path/mod.ts";
+import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.7.1/file.ts";
 import {
   isAbsolute,
   relative,
-} from "https://deno.land/std@0.196.0/path/mod.ts";
+} from "https://deno.land/std@0.215.0/path/mod.ts";
 
 type Params = {
   "new": boolean;
