@@ -172,11 +172,12 @@ export class Source extends BaseSource<Params> {
 const safeStat = async (path: string): Promise<Deno.FileInfo | null> => {
   // NOTE: Deno.stat() may be failed
   try {
-    let stat = await Deno.lstat(path);
+    const stat = await Deno.lstat(path);
     if (stat.isSymlink) {
       try {
-        stat = await Deno.stat(path);
+        const stat = await Deno.stat(path);
         stat.isSymlink = true;
+        return stat;
       } catch (_: unknown) {
         // Ignore stat exception
       }
