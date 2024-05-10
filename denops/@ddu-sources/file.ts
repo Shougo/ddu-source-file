@@ -5,12 +5,12 @@ import {
 } from "https://deno.land/x/ddu_vim@v4.0.0/types.ts";
 import { Denops, fn } from "https://deno.land/x/ddu_vim@v4.0.0/deps.ts";
 import { printError, treePath2Filename } from "https://deno.land/x/ddu_vim@v4.0.0/utils.ts";
-import { join } from "https://deno.land/std@0.222.1/path/mod.ts";
+import { join } from "jsr:@std/path@0.224.0";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.7.1/file.ts";
 import {
   isAbsolute,
   relative,
-} from "https://deno.land/std@0.222.1/path/mod.ts";
+} from "jsr:@std/path@0.222.1";
 
 type Params = {
   "new": boolean;
