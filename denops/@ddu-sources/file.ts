@@ -1,16 +1,17 @@
 import {
   BaseSource,
+  Context,
   Item,
   SourceOptions,
 } from "https://deno.land/x/ddu_vim@v4.0.0/types.ts";
 import { Denops, fn } from "https://deno.land/x/ddu_vim@v4.0.0/deps.ts";
-import { printError, treePath2Filename } from "https://deno.land/x/ddu_vim@v4.0.0/utils.ts";
+import {
+  printError,
+  treePath2Filename,
+} from "https://deno.land/x/ddu_vim@v4.0.0/utils.ts";
 import { join } from "jsr:@std/path@0.224.0";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.7.1/file.ts";
-import {
-  isAbsolute,
-  relative,
-} from "jsr:@std/path@0.222.1";
+import { isAbsolute, relative } from "jsr:@std/path@0.222.1";
 
 type Params = {
   "new": boolean;
@@ -21,6 +22,7 @@ export class Source extends BaseSource<Params> {
 
   override gather(args: {
     denops: Denops;
+    context: Context;
     sourceOptions: SourceOptions;
     sourceParams: Params;
     input: string;
@@ -31,9 +33,11 @@ export class Source extends BaseSource<Params> {
       async start(controller) {
         const maxItems = 20000;
 
-        const basePath = args.sourceOptions.path.length != 0
-          ? treePath2Filename(args.sourceOptions.path)
-          : await fn.getcwd(args.denops) as string;
+        const basePath = treePath2Filename(
+          args.sourceOptions.path.length != 0
+            ? args.sourceOptions.path
+            : args.context.path,
+        );
 
         const tree = async (root: string) => {
           const stat = await safeStat(root);
