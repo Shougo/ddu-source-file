@@ -9,8 +9,9 @@ import {
   printError,
   treePath2Filename,
 } from "https://deno.land/x/ddu_vim@v4.0.0/utils.ts";
-import { join } from "jsr:@std/path@0.224.0";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.7.1/file.ts";
+
+import { join } from "jsr:@std/path@0.224.0";
 import { isAbsolute, relative } from "jsr:@std/path@0.222.1";
 
 type Params = {
