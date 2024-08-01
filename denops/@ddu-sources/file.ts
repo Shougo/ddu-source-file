@@ -1,18 +1,21 @@
 import {
   BaseSource,
-  Context,
-  Item,
-  SourceOptions,
-} from "https://deno.land/x/ddu_vim@v4.0.0/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v4.0.0/deps.ts";
+  type Context,
+  type Item,
+  type SourceOptions,
+} from "jsr:@shougo/ddu-vim@^5.0.0/types";
 import {
   printError,
   treePath2Filename,
-} from "https://deno.land/x/ddu_vim@v4.0.0/utils.ts";
-import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.7.1/file.ts";
+} from "jsr:@shougo/ddu-vim@^5.0.0/utils";
 
-import { join } from "jsr:@std/path@0.224.0";
-import { isAbsolute, relative } from "jsr:@std/path@0.222.1";
+import { type ActionData } from "jsr:@shougo/ddu-kind-file@^0.8.0";
+
+import type { Denops } from "jsr:@denops/core@^7.0.0";
+import * as fn from "jsr:@denops/std@^7.0.1/function";
+
+import { join } from "jsr:@std/path@^1.0.2";
+import { isAbsolute, relative } from "jsr:@std/path@^1.0.2";
 
 type Params = {
   "new": boolean;
