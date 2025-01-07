@@ -20,6 +20,7 @@ import { relative } from "jsr:@std/path@~1.0.2/relative";
 
 type Params = {
   "new": boolean;
+  "ignoredDirectories": boolean;
 };
 
 export class Source extends BaseSource<Params> {
@@ -57,6 +58,10 @@ export class Source extends BaseSource<Params> {
 
               const stat = await safeStat(path);
               if (!stat) {
+                continue;
+              } else if (
+                args.sourceParams.ignoredDirectories && stat.isDirectory
+              ) {
                 continue;
               }
 
@@ -174,6 +179,7 @@ export class Source extends BaseSource<Params> {
   override params(): Params {
     return {
       "new": false,
+      "ignoredDirectories": false,
     };
   }
 }

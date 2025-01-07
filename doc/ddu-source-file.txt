@@ -48,6 +48,11 @@ new		(boolean)
 
 		Default: v:false
 
+                                    *ddu-source-file-param-ignoredDirectories*
+ignoredDirectories	(boolean)
+		ignore directories.
+
+		Default: v:false
 
 ==============================================================================
 FREQUENTLY ASKED QUESTIONS (FAQ)		*ddu-source-file-faq*
