@@ -2,25 +2,25 @@ import {
   type Context,
   type Item,
   type SourceOptions,
-} from "jsr:@shougo/ddu-vim@~6.1.0/types";
-import { BaseSource } from "jsr:@shougo/ddu-vim@~6.1.0/source";
+} from "jsr:@shougo/ddu-vim@~9.4.0/types";
+import { BaseSource } from "jsr:@shougo/ddu-vim@~9.4.0/source";
 import {
   printError,
   treePath2Filename,
-} from "jsr:@shougo/ddu-vim@~6.1.0/utils";
+} from "jsr:@shougo/ddu-vim@~9.4.0/utils";
 
 import { type ActionData } from "jsr:@shougo/ddu-kind-file@~0.9.0";
 
 import type { Denops } from "jsr:@denops/core@~7.0.0";
-import * as fn from "jsr:@denops/std@~7.1.0/function";
+import * as fn from "jsr:@denops/std@~7.4.0/function";
 
 import { join } from "jsr:@std/path@~1.0.2/join";
 import { isAbsolute } from "jsr:@std/path@~1.0.2/is-absolute";
 import { relative } from "jsr:@std/path@~1.0.2/relative";
 
 type Params = {
-  "new": boolean;
-  "ignoredDirectories": boolean;
+  ignoreDirectories: boolean;
+  new: boolean;
 };
 
 export class Source extends BaseSource<Params> {
@@ -60,7 +60,7 @@ export class Source extends BaseSource<Params> {
               if (!stat) {
                 continue;
               } else if (
-                args.sourceParams.ignoredDirectories && stat.isDirectory
+                args.sourceParams.ignoreDirectories && stat.isDirectory
               ) {
                 continue;
               }
@@ -178,8 +178,8 @@ export class Source extends BaseSource<Params> {
 
   override params(): Params {
     return {
-      "new": false,
-      "ignoredDirectories": false,
+      ignoreDirectories: false,
+      new: false,
     };
   }
 }

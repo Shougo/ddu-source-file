@@ -30,7 +30,7 @@ https://github.com/Shougo/ddu-kind-file
 
 ==============================================================================
 EXAMPLES                                            *ddu-source-file-examples*
->
+>vim
 	call ddu#start(#{ sources: [#{ name: 'file' }] })
 	
 	" Change base path.
@@ -42,20 +42,20 @@ EXAMPLES                                            *ddu-source-file-examples*
 ==============================================================================
 PARAMS                                                *ddu-source-file-params*
 
+                                     *ddu-source-file-param-ignoreDirectories*
+ignoreDirectories	(boolean)
+		Ignore directories.
+
+		Default: v:false
+
                                                    *ddu-source-file-param-new*
 new		(boolean)
 		Create new file by user input.
 
 		Default: v:false
 
-                                    *ddu-source-file-param-ignoredDirectories*
-ignoredDirectories	(boolean)
-		ignore directories.
-
-		Default: v:false
-
 ==============================================================================
-FREQUENTLY ASKED QUESTIONS (FAQ)		*ddu-source-file-faq*
+FREQUENTLY ASKED QUESTIONS (FAQ)                         *ddu-source-file-faq*
 
 Q: I want to create file like denite.nvim "file:new" feature.
 
