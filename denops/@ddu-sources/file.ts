@@ -2,21 +2,21 @@ import {
   type Context,
   type Item,
   type SourceOptions,
-} from "jsr:@shougo/ddu-vim@~9.4.0/types";
-import { BaseSource } from "jsr:@shougo/ddu-vim@~9.4.0/source";
+} from "jsr:@shougo/ddu-vim@~10.4.0/types";
+import { BaseSource } from "jsr:@shougo/ddu-vim@~10.4.0/source";
 import {
   printError,
   treePath2Filename,
-} from "jsr:@shougo/ddu-vim@~9.4.0/utils";
+} from "jsr:@shougo/ddu-vim@~10.4.0/utils";
 
 import { type ActionData } from "jsr:@shougo/ddu-kind-file@~0.9.0";
 
 import type { Denops } from "jsr:@denops/core@~7.0.0";
-import * as fn from "jsr:@denops/std@~7.4.0/function";
+import * as fn from "jsr:@denops/std@~7.6.0/function";
 
-import { join } from "jsr:@std/path@~1.0.2/join";
-import { isAbsolute } from "jsr:@std/path@~1.0.2/is-absolute";
-import { relative } from "jsr:@std/path@~1.0.2/relative";
+import { join } from "jsr:@std/path@~1.1.0/join";
+import { isAbsolute } from "jsr:@std/path@~1.1.0/is-absolute";
+import { relative } from "jsr:@std/path@~1.1.0/relative";
 
 type Params = {
   ignoreDirectories: boolean;
@@ -93,7 +93,11 @@ export class Source extends BaseSource<Params> {
               }
             }
           } catch (e: unknown) {
-            console.error(e);
+            if (e instanceof Error && e.name.includes("AbortReason")) {
+              // Ignore AbortReason errors
+            } else {
+              console.error(e);
+            }
           }
 
           return items;
