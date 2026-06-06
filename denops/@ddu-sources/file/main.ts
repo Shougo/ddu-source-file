@@ -5,7 +5,6 @@ import { printError, treePath2Filename } from "@shougo/ddu-vim/utils";
 import type { ActionData } from "@shougo/ddu-kind-file";
 
 import type { Denops } from "@denops/std";
-import * as fn from "@denops/std/function";
 
 import { join } from "@std/path/join";
 import { isAbsolute } from "@std/path/is-absolute";
@@ -33,7 +32,7 @@ export class Source extends BaseSource<Params> {
         const maxItems = 20000;
 
         const basePath = treePath2Filename(
-          args.sourceOptions.path.length != 0
+          args.sourceOptions.path.length > 0
             ? args.sourceOptions.path
             : args.context.path,
         );
@@ -96,7 +95,7 @@ export class Source extends BaseSource<Params> {
         };
 
         if (args.sourceParams.new) {
-          if (args.input != "") {
+          if (args.input.length > 0) {
             controller.enqueue(
               [{
                 word: args.input,
@@ -150,14 +149,16 @@ export class Source extends BaseSource<Params> {
 
   override async checkUpdated(args: {
     denops: Denops;
+    context: Context;
     sourceOptions: SourceOptions;
   }): Promise<boolean> {
-    let dir = treePath2Filename(args.sourceOptions.path);
-    if (dir == "") {
-      dir = await fn.getcwd(args.denops) as string;
-    }
+    const basePath = treePath2Filename(
+      args.sourceOptions.path.length > 0
+        ? args.sourceOptions.path
+        : args.context.path,
+    );
 
-    const stat = await safeStat(dir);
+    const stat = await safeStat(basePath);
     if (!stat || !stat.isDirectory || !stat.mtime) {
       return false;
     }
