@@ -39,8 +39,7 @@ export class Source extends BaseSource<Params> {
         );
 
         const tree = async (root: string) => {
-          const stat = await safeStat(root);
-          if (!stat?.isDirectory) {
+          if (!(await safeStat(root))?.isDirectory) {
             return [];
           }
 
@@ -117,34 +116,30 @@ export class Source extends BaseSource<Params> {
             : basePath;
 
           const stat = await safeStat(basePath);
-          if (stat?.isDirectory) {
+          if (!stat) {
+            await printError(
+              args.denops,
+              `${basePath} is not found.`,
+            );
+          } else if (stat.isDirectory) {
             controller.enqueue(await tree(rootPath));
           } else {
-            // Check the file exists.
-            const stat = await safeStat(basePath);
-            if (stat) {
-              controller.enqueue(
-                [{
-                  word: basePath,
-                  action: {
-                    path: basePath,
-                    isDirectory: stat.isDirectory,
-                    isLink: stat.isSymlink,
-                  },
-                  status: {
-                    size: stat.size,
-                    time: stat.mtime?.getTime(),
-                  },
-                  isTree: stat.isDirectory,
-                  treePath: basePath,
-                }],
-              );
-            } else {
-              await printError(
-                args.denops,
-                `${rootPath} is not found.`,
-              );
-            }
+            controller.enqueue(
+              [{
+                word: basePath,
+                action: {
+                  path: basePath,
+                  isDirectory: stat.isDirectory,
+                  isLink: stat.isSymlink,
+                },
+                status: {
+                  size: stat.size,
+                  time: stat.mtime?.getTime(),
+                },
+                isTree: stat.isDirectory,
+                treePath: basePath,
+              }],
+            );
           }
         }
 
@@ -187,9 +182,7 @@ const safeStat = async (path: string): Promise<Deno.FileInfo | null> => {
     const stat = await Deno.lstat(path);
     if (stat.isSymlink) {
       try {
-        const stat = await Deno.stat(path);
-        stat.isSymlink = true;
-        return stat;
+        return { ...await Deno.stat(path), isSymlink: true };
       } catch (_: unknown) {
         // Ignore stat exception
       }
