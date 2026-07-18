@@ -75,7 +75,7 @@ export class Source extends BaseSource<Params> {
                 treePath: path,
               });
 
-              if (items.length > maxItems) {
+              if (items.length >= maxItems) {
                 // Update items
                 controller.enqueue(items);
 
@@ -108,10 +108,11 @@ export class Source extends BaseSource<Params> {
           }
         } else {
           const slashPos = args.input.lastIndexOf("/");
+          const inputDir = slashPos >= 0 ? args.input.slice(0, slashPos) : "";
           const rootPath = isAbsolute(args.input)
-            ? args.input.slice(0, slashPos)
-            : slashPos >= 0
-            ? join(basePath, args.input.slice(0, slashPos))
+            ? inputDir
+            : inputDir.length > 0
+            ? join(basePath, inputDir)
             : basePath;
 
           const stat = await safeStat(basePath);
@@ -177,6 +178,7 @@ export class Source extends BaseSource<Params> {
   }
 }
 
+// Returns symlink-aware stat safely.
 const safeStat = async (path: string): Promise<Deno.FileInfo | null> => {
   // NOTE: Deno.stat() may be failed
   try {
